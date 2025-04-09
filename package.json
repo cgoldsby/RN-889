@@ -4,14 +4,19 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "ios": "(cd ios ; rm -rf build/generated/ios Pods Podfile.lock ; bundle i ; bundle exec pod install) ; react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest"
   },
   "dependencies": {
     "react": "19.0.0",
-    "react-native": "0.79.0"
+    "react-native": "^0.80.0-nightly-20250410-b47bfcef5",
+    "react-native-svg": "^15.11.2",
+    "react-native-webview": "^13.13.5",
+    "test-library-macos": "./lib/test-library-macos",
+    "test-library-tvos": "./lib/test-library-tvos",
+    "test-library-visionos": "./lib/test-library-visionos"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

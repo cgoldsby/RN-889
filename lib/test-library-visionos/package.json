@@ -1,0 +1,24 @@
+{
+  "name": "test-library-visionos",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "codegenConfig": {
+    "name": "MyVisionOSLibrary",
+    "type": "all",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.reactnativecommunity.visionos"
+    },
+    "ios": {
+      "componentProvider": {
+        "VisionOSClass": "VisionOSClass"
+      }
+    }
+  }
+}

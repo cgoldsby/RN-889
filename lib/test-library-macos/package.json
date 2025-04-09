@@ -1,0 +1,24 @@
+{
+  "name": "test-library-macos",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "codegenConfig": {
+    "name": "MyMacOSLibrary",
+    "type": "all",
+    "jsSrcsDir": "./src",
+    "android": {
+      "javaPackageName": "com.reactnativecommunity.macos"
+    },
+    "ios": {
+      "componentProvider": {
+        "MacOSClass": "MacOSClass"
+      }
+    }
+  }
+}
