@@ -155,3 +155,124 @@ index dc0df16..401912c 100644
 +  // exported for testing purposes only:
 +  _generateComponentRegistry,
  };
+diff --git a/node_modules/react-native/scripts/codegen/generate-artifacts-executor/index.js b/node_modules/react-native/scripts/codegen/generate-artifacts-executor/index.js
+index b062ad6..9b34283 100644
+--- a/node_modules/react-native/scripts/codegen/generate-artifacts-executor/index.js
++++ b/node_modules/react-native/scripts/codegen/generate-artifacts-executor/index.js
+@@ -4,6 +4,7 @@
+  * This source code is licensed under the MIT license found in the
+  * LICENSE file in the root directory of this source tree.
+  *
++ * @flow strict-local
+  * @format
+  */
+ 
+@@ -58,11 +59,11 @@ const path = require('path');
+  * @throws If it can't find a cli for the CodeGen.
+  */
+ function execute(
+-  projectRoot,
+-  targetPlatform,
+-  baseOutputPath,
+-  source,
+-  runReactNativeCodegen = true,
++  projectRoot /*: string */,
++  targetPlatform /*: string */,
++  baseOutputPath /*: string */,
++  source /*: string */,
++  runReactNativeCodegen /*: boolean */ = true,
+ ) {
+   try {
+     codegenLog(`Analyzing ${path.join(projectRoot, 'package.json')}`);
+@@ -120,6 +121,7 @@ function execute(
+         platform,
+       );
+ 
++      let librariesSupportedApplePlatforms = {};
+       if (runReactNativeCodegen) {
+         const schemaInfos = generateSchemaInfos(libraries);
+         generateNativeCode(
+@@ -130,11 +132,23 @@ function execute(
+           pkgJsonIncludesGeneratedCode(pkgJson),
+           platform,
+         );
++
++        librariesSupportedApplePlatforms = schemaInfos.reduce(
++          (acc, {library, supportedApplePlatforms}) => {
++            acc[library.config.name] = supportedApplePlatforms;
++            return acc;
++          },
++          {},
++        );
+       }
+ 
+       if (source === 'app' && platform !== 'android') {
+         // These components are only required by apps, not by libraries and are Apple specific.
+-        generateRCTThirdPartyComponents(libraries, outputPath);
++        generateRCTThirdPartyComponents(
++          libraries,
++          librariesSupportedApplePlatforms,
++          outputPath,
++        );
+         generateRCTModuleProviders(projectRoot, pkgJson, libraries, outputPath);
+         generateCustomURLHandlers(libraries, outputPath);
+         generateUnstableModulesRequiringMainQueueSetupProvider(
+@@ -161,7 +175,10 @@ function execute(
+   return;
+ }
+ 
+-function readOutputDirFromPkgJson(pkgJson, platform) {
++function readOutputDirFromPkgJson(
++  pkgJson /*: $FlowFixMe */,
++  platform /*: string */,
++) {
+   const codegenConfig = pkgJson.codegenConfig;
+   if (codegenConfig == null || typeof codegenConfig !== 'object') {
+     return null;
+@@ -179,12 +196,19 @@ function readOutputDirFromPkgJson(pkgJson, platform) {
+   return null;
+ }
+ 
+-function computeOutputPath(projectRoot, baseOutputPath, pkgJson, platform) {
++function computeOutputPath(
++  projectRoot /*: string */,
++  baseOutputPath /*: string */,
++  pkgJson /*: $FlowFixMe */,
++  platform /*: string */,
++) {
+   if (baseOutputPath == null) {
+     const outputDirFromPkgJson = readOutputDirFromPkgJson(pkgJson, platform);
+     if (outputDirFromPkgJson != null) {
++      // $FlowFixMe[reassign-const]
+       baseOutputPath = path.join(projectRoot, outputDirFromPkgJson);
+     } else {
++      // $FlowFixMe[reassign-const]
+       baseOutputPath = projectRoot;
+     }
+   }
+@@ -201,7 +225,7 @@ function computeOutputPath(projectRoot, baseOutputPath, pkgJson, platform) {
+   return baseOutputPath;
+ }
+ 
+-function defaultOutputPathForAndroid(baseOutputPath) {
++function defaultOutputPathForAndroid(baseOutputPath /*: string */) {
+   return path.join(
+     baseOutputPath,
+     'android',
+@@ -213,11 +237,14 @@ function defaultOutputPathForAndroid(baseOutputPath) {
+   );
+ }
+ 
+-function defaultOutputPathForIOS(baseOutputPath) {
++function defaultOutputPathForIOS(baseOutputPath /*: string */) {
+   return path.join(baseOutputPath, 'build', 'generated', 'ios');
+ }
+ 
+-function mustGenerateNativeCode(includeLibraryPath, schemaInfo) {
++function mustGenerateNativeCode(
++  includeLibraryPath /*: string */,
++  schemaInfo /*: $FlowFixMe */,
++) {
+   // If library's 'codegenConfig' sets 'includesGeneratedCode' to 'true',
+   // then we assume that native code is shipped with the library,
+   // and we don't need to generate it.
