@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "react": "19.0.0",
-    "react-native": "^0.80.0-nightly-20250410-b47bfcef5",
+    "react-native": "^0.81.0-nightly-20250609-198c6fc81",
     "react-native-svg": "^15.11.2",
     "react-native-webview": "^13.13.5",
     "test-library-macos": "./lib/test-library-macos",
